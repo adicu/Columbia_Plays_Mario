@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"os/exec"
 	"strings"
+	"net/http"
 )
 
 const (
@@ -62,7 +63,8 @@ type UserCommand struct {
 
 // Objects that collect commands to be passed to the emulator
 type CommandCollector interface {
-	Get(chan UserCommand)
+	GetUrl() string
+	http.Handler
 }
 
 // Represents an emulator

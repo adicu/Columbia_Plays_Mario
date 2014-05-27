@@ -7,26 +7,26 @@ import (
 	"strings"
 )
 
-const PORT = ":80"
 
-type message struct {
-	From string
-	Body string
+type Message struct {
+	From string `json:"from"`
+	Body string `json:"body"`
 }
 
-func (m message) MakeUserCommand() UserCommand {
+func (m Message) MakeUserCommand() UserCommand {
 	return UserCommand{ConvertCommand(m.Body), m.From}
 }
 
-type TwilioCollector struct {
+type TwilioMessageHandler struct {
 	listenUrl string
-}
-
-type MessageHandler struct {
 	messageQueue chan UserCommand
 }
 
-func parseTwilio(b string) message {
+func (t TwilioMessageHandler) GetUrl() string {
+	return t.listenUrl
+}
+
+func parseTwilio(b string) Message {
 	kv := make(map[string]string)
 	pairs := strings.Split(b, "&")
 	for _, pair := range pairs {
@@ -36,43 +36,31 @@ func parseTwilio(b string) message {
 		}
 	}
 	if kv["From"] != "" && kv["Body"] != "" {
-		return message{kv["From"], kv["Body"]}
+		return Message{kv["From"], kv["Body"]}
 	}
-	return message{}
+	return Message{}
 }
 
-func (m MessageHandler) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
+func (m TwilioMessageHandler) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	if req.Method != "POST" {
 		resp.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
 
-	msg := message{}
+	msg := Message{}
 	bodyBytes, err := ioutil.ReadAll(req.Body)
 	if err != nil {
-		log.Print("Error reading in message body")
+		log.Print("Error reading in twilio message body")
 		resp.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	msg = parseTwilio(string(bodyBytes))
 	if msg.From == "" {
-		log.Print("Error decoding message body")
+		log.Print("Error decoding twilio message body")
 		resp.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	m.messageQueue <- msg.MakeUserCommand()
-}
-
-func (t TwilioCollector) Get(queue chan UserCommand) {
-	mh := MessageHandler{queue}
-	http.Handle(t.listenUrl, mh)
-
-	log.Printf("Listening for Twilio texts on %s\n", PORT)
-	err := http.ListenAndServe(PORT, nil)
-	if err != nil {
-		log.Print(err.Error())
-		log.Fatal("TWILIO http ListenAndServe failed")
-	}
 }
