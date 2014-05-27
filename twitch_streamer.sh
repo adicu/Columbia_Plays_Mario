@@ -2,7 +2,7 @@
 
 # Settings that will work for Twitch streaming:
 VI_RES="320x288" # Captured area of the desktop
-VI_OFFSET="0,0"
+VI_OFFSET="0,28"
 VI_FREQ="30"
  
 VO_RES="320x288"

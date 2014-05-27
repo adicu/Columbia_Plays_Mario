@@ -7,6 +7,7 @@
 - clone the repo
 - Run the install script
 - Edit the scale of the gvbam to `2`
+  - or copy the gvbam config to `~/.config/gvbam/config`
 
 # Running it
 
@@ -21,5 +22,10 @@
   - `bash all_windows.sh`
   - find the window ID for gvbam
   - `go run *.go WINDOW_ID`
+
+
+## Help
+
+Used scripts from [stritch's repo](https://github.com/strich/HeadlessCrowdEmulator) to get a headless emluator streamed to Twitch.tv.
 
 
