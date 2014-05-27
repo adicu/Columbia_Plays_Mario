@@ -1,0 +1,3 @@
+[submodule "HeadlessCrowdEmulator"]
+	path = HeadlessCrowdEmulator
+	url = git@github.com:strich/HeadlessCrowdEmulator.git
