@@ -8,6 +8,8 @@
 - Run the install script
 - Edit the scale of the gvbam to `2`
   - or copy the gvbam config to `~/.config/gvbam/config`
+- Copy in your legally-attained gbc ROM
+  - update the settings file with the name of the file
 
 # Running it
 
