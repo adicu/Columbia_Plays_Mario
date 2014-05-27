@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	TwilioEndpoint = "/twilio"
+	TwilioEndpoint = "/twilio.json"
 )
 
 func main() {

@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-const PORT = ":5000"
+const PORT = ":80"
 
 type message struct {
 	From string
@@ -50,6 +50,7 @@ func (m MessageHandler) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 
 	msg := message{}
 	bodyBytes, err := ioutil.ReadAll(req.Body)
+	log.Print(string(bodyBytes))
 	if err != nil {
 		log.Print("Error reading in message body")
 		resp.WriteHeader(http.StatusInternalServerError)
