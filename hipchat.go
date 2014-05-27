@@ -1,14 +1,14 @@
 package main
 
 import (
+	"encoding/json"
 	"io/ioutil"
 	"log"
 	"net/http"
-	"encoding/json"
 )
 
 type HipChatCollector struct {
-	listenUrl string
+	listenUrl    string
 	messageQueue chan UserCommand
 }
 

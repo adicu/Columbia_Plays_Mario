@@ -2,9 +2,9 @@ package main
 
 import (
 	"bytes"
+	"net/http"
 	"os/exec"
 	"strings"
-	"net/http"
 )
 
 const (
@@ -59,6 +59,15 @@ func ConvertCommand(c string) string {
 type UserCommand struct {
 	key  string
 	user string
+}
+
+type Message struct {
+	From string `json:"from"`
+	Body string `json:"body"`
+}
+
+func (m Message) MakeUserCommand() UserCommand {
+	return UserCommand{ConvertCommand(m.Body), m.From}
 }
 
 // Objects that collect commands to be passed to the emulator

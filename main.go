@@ -2,13 +2,13 @@ package main
 
 import (
 	"log"
-	"os"
 	"net/http"
+	"os"
 )
 
 const (
-	PORT = ":80"
-	TwilioEndpoint = "/twilio"
+	PORT            = ":80"
+	TwilioEndpoint  = "/twilio"
 	HipChatEndpoint = "/hipchat"
 )
 
