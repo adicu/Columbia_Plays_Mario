@@ -1,7 +1,6 @@
 package main
 
 import (
-	"io/ioutil"
 	"log"
 	"net/http"
 	"strings"
@@ -44,19 +43,12 @@ func parseTwilio(b string) Message {
 func (m TwilioMessageHandler) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	if req.Method != "POST" {
 		resp.WriteHeader(http.StatusMethodNotAllowed)
+		log.Printf("Wrong http method, %s, on Twilio endpoint.", req.Method)
 		return
 	}
 
-	msg := Message{}
-	bodyBytes, err := ioutil.ReadAll(req.Body)
-	if err != nil {
-		log.Print("Error reading in twilio message body")
-		resp.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	msg = parseTwilio(string(bodyBytes))
-	if msg.From == "" {
+	msg := Message{req.FormValue("From"), req.FormValue("Body")}
+	if msg.From == "" || msg.Body == "" {
 		log.Print("Error decoding twilio message body")
 		resp.WriteHeader(http.StatusInternalServerError)
 		return

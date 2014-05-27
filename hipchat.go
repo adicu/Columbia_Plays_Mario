@@ -19,6 +19,7 @@ func (h HipChatCollector) GetUrl() string {
 func (h HipChatCollector) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	if req.Method != "POST" {
 		resp.WriteHeader(http.StatusMethodNotAllowed)
+		log.Printf("Wrong http method, %s, on HipChat endpoint.", req.Method)
 		return
 	}
 
