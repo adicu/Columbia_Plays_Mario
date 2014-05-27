@@ -54,16 +54,15 @@ func ConvertCommand(c string) string {
 	return ""
 }
 
-
 // Command to be passed to the emulator
 type UserCommand struct {
-	key string
+	key  string
 	user string
 }
 
 // Objects that collect commands to be passed to the emulator
 type CommandCollector interface {
-	Get (chan UserCommand)
+	Get(chan UserCommand)
 }
 
 // Represents an emulator

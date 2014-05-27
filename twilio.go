@@ -1,10 +1,9 @@
 package main
 
 import (
-	"net/http"
-	"log"
 	"io/ioutil"
-	"encoding/json"
+	"log"
+	"net/http"
 	"strings"
 )
 
@@ -50,7 +49,6 @@ func (m MessageHandler) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 
 	msg := message{}
 	bodyBytes, err := ioutil.ReadAll(req.Body)
-	log.Print(string(bodyBytes))
 	if err != nil {
 		log.Print("Error reading in message body")
 		resp.WriteHeader(http.StatusInternalServerError)
@@ -67,7 +65,7 @@ func (m MessageHandler) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	m.messageQueue <- msg.MakeUserCommand()
 }
 
-func (t TwilioCollector) Get (queue chan UserCommand) {
+func (t TwilioCollector) Get(queue chan UserCommand) {
 	mh := MessageHandler{queue}
 	http.Handle(t.listenUrl, mh)
 
