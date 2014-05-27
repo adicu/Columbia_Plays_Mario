@@ -5,15 +5,14 @@ import (
 	"log"
 	"io/ioutil"
 	"encoding/json"
+	"strings"
 )
 
 const PORT = ":5000"
 
 type message struct {
-	From string `json:"from"`
-	Body string `json:"body"`
-	DateCreated string `json:"date_created"`
-	SID string `json:"sid"`
+	From string
+	Body string
 }
 
 func (m message) MakeUserCommand() UserCommand {
@@ -26,6 +25,21 @@ type TwilioCollector struct {
 
 type MessageHandler struct {
 	messageQueue chan UserCommand
+}
+
+func parseTwilio(b string) message {
+	kv := make(map[string]string)
+	pairs := strings.Split(b, "&")
+	for _, pair := range pairs {
+		splits := strings.Split(pair, "=")
+		if len(splits) == 2 {
+			kv[splits[0]] = splits[1]
+		}
+	}
+	if kv["From"] != "" && kv["Body"] != "" {
+		return message{kv["From"], kv["Body"]}
+	}
+	return message{}
 }
 
 func (m MessageHandler) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
@@ -42,8 +56,8 @@ func (m MessageHandler) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	err = json.Unmarshal(bodyBytes, msg)
-	if err != nil {
+	msg = parseTwilio(string(bodyBytes))
+	if msg.From == "" {
 		log.Print("Error decoding message body")
 		resp.WriteHeader(http.StatusInternalServerError)
 		return
