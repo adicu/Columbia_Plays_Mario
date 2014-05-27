@@ -23,7 +23,7 @@ func ConvertCommand(c string) string {
 	case "l":
 		fallthrough
 	case "left":
-		return "Up"
+		return "Left"
 
 	// Down
 	case "d":
@@ -35,7 +35,7 @@ func ConvertCommand(c string) string {
 	case "r":
 		fallthrough
 	case "right":
-		return "Down"
+		return "Right"
 
 	// A
 	case "a":
