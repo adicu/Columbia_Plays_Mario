@@ -32,10 +32,10 @@ func main() {
 	emulator := GVBAM{os.Args[1]}
 	commandQueue := make(chan UserCommand)
 
-	t := TwilioMessageHandler{TwilioEndpoint, commandQueue}
-	h := HipChatCollector{HipChatEndpoint, commandQueue}
-
-	go getCommands([]CommandCollector{t, h})
+	go getCommands([]CommandCollector{
+		TwilioMessageHandler{TwilioEndpoint, commandQueue},
+		HipChatCollector{HipChatEndpoint, commandQueue},
+	})
 
 	for {
 		select {

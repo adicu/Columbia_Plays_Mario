@@ -12,6 +12,24 @@ type HipChatCollector struct {
 	messageQueue chan UserCommand
 }
 
+type HipChatHook struct {
+	Event string `json:"event"`
+	Item  struct {
+		Message struct {
+			Message string `json:"message"`
+			Date    string `json:"date"`
+			From    struct {
+				Name string `json:"name"`
+			} `json:"from"`
+		} `json:"message"`
+	} `json:"item"`
+	WebhookId string `json:"webhook_id"`
+}
+
+func (m HipChatHook) MakeUserCommand() UserCommand {
+	return UserCommand{ConvertCommand(m.Item.Message.Message), m.Item.Message.From.Name}
+}
+
 func (h HipChatCollector) GetUrl() string {
 	return h.listenUrl
 }
@@ -23,7 +41,7 @@ func (h HipChatCollector) ServeHTTP(resp http.ResponseWriter, req *http.Request)
 		return
 	}
 
-	msg := Message{}
+	msg := HipChatHook{}
 	bodyBytes, err := ioutil.ReadAll(req.Body)
 	if err != nil {
 		log.Print("Error reading in hipchat message body")
@@ -33,7 +51,7 @@ func (h HipChatCollector) ServeHTTP(resp http.ResponseWriter, req *http.Request)
 
 	err = json.Unmarshal(bodyBytes, &msg)
 	if err != nil {
-		log.Print("Error parsing hipchat json body")
+		log.Print("Error parsing hipchat webhook json body")
 		resp.WriteHeader(http.StatusInternalServerError)
 		return
 	}
