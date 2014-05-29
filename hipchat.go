@@ -27,7 +27,7 @@ type HipChatHook struct {
 }
 
 func (m HipChatHook) MakeUserCommand() UserCommand {
-	return UserCommand{ConvertCommand(m.Item.Message.Message), m.Item.Message.From.Name}
+	return UserCommand{ConvertCommand(m.Item.Message.Message), "HipChat", m.Item.Message.From.Name}
 }
 
 func (h HipChatCollector) GetUrl() string {

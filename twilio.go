@@ -5,6 +5,11 @@ import (
 	"net/http"
 )
 
+type Message struct {
+	From string `json:"from"`
+	Body string `json:"body"`
+}
+
 type TwilioMessageHandler struct {
 	listenUrl    string
 	messageQueue chan UserCommand
@@ -28,5 +33,5 @@ func (m TwilioMessageHandler) ServeHTTP(resp http.ResponseWriter, req *http.Requ
 		return
 	}
 
-	m.messageQueue <- msg.MakeUserCommand()
+	m.messageQueue <- UserCommand{ConvertCommand(msg.Body), "Twilio", msg.From}
 }
