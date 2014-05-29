@@ -12,6 +12,13 @@ const (
 	HipChatEndpoint = "/hipchat"
 )
 
+func checkEnvVariables() {
+	// check CLI args
+	if len(os.Args) != 2 {
+		log.Fatal("Missing window number")
+	}
+}
+
 func getCommands(handlers []CommandCollector) {
 	for _, h := range handlers {
 		http.Handle(h.GetUrl(), h)
@@ -26,9 +33,7 @@ func getCommands(handlers []CommandCollector) {
 }
 
 func main() {
-	if len(os.Args) != 2 {
-		log.Fatal("Missing window number")
-	}
+	checkEnvVariables()
 	emulator := GVBAM{os.Args[1]}
 	commandQueue := make(chan UserCommand)
 
