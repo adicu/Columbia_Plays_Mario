@@ -23,7 +23,7 @@ type HipChatHook struct {
 			} `json:"from"`
 		} `json:"message"`
 	} `json:"item"`
-	WebhookId string `json:"webhook_id"`
+	WebhookId int `json:"webhook_id"`
 }
 
 func (m HipChatHook) MakeUserCommand() UserCommand {
@@ -44,14 +44,14 @@ func (h HipChatCollector) ServeHTTP(resp http.ResponseWriter, req *http.Request)
 	msg := HipChatHook{}
 	bodyBytes, err := ioutil.ReadAll(req.Body)
 	if err != nil {
-		log.Print("Error reading in hipchat message body")
+		log.Printf("Error reading in hipchat message body: %s\n", err.Error())
 		resp.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	err = json.Unmarshal(bodyBytes, &msg)
 	if err != nil {
-		log.Print("Error parsing hipchat webhook json body")
+		log.Printf("Error parsing hipchat webhook json body: %s\n", err.Error())
 		resp.WriteHeader(http.StatusInternalServerError)
 		return
 	}
