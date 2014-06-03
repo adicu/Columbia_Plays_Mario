@@ -4,10 +4,11 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 )
 
 const (
-	PORT            = ":5000"
+	PORT            = ":80"
 	TwilioEndpoint  = "/twilio"
 	HipChatEndpoint = "/hipchat"
 )
@@ -47,6 +48,7 @@ func main() {
 		case cmd := <-commandQueue:
 			log.Printf("Move: %6s Via %10s By: %s\n", cmd.key, cmd.via, cmd.user)
 			emulator.Command(cmd.key)
+			time.Sleep(200 * time.Millisecond)
 		}
 	}
 }

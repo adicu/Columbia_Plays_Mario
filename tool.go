@@ -58,8 +58,8 @@ func ConvertCommand(c string) string {
 // Command to be passed to the emulator
 type UserCommand struct {
 	key  string
-	user string
 	via  string
+	user string
 }
 
 // Objects that collect commands to be passed to the emulator
