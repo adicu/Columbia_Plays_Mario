@@ -48,7 +48,7 @@ func main() {
 		case cmd := <-commandQueue:
 			log.Printf("Move: %6s Via %10s By: %s\n", cmd.key, cmd.via, cmd.user)
 			emulator.Command(cmd.key)
-			time.Sleep(200 * time.Millisecond)
+			time.Sleep(500 * time.Millisecond)
 		}
 	}
 }

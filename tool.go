@@ -47,10 +47,12 @@ func ConvertCommand(c string) string {
 		return "x"
 
 	// Start
-	case "s":
-		fallthrough
 	case "start":
-		return "Enter"
+		return "Return"
+
+	// Select
+	case "select":
+		return "Backspace"
 	}
 	return ""
 }
