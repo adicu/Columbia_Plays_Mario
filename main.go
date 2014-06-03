@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	PORT            = ":80"
+	PORT            = ":5000"
 	TwilioEndpoint  = "/twilio"
 	HipChatEndpoint = "/hipchat"
 )
@@ -45,7 +45,7 @@ func main() {
 	for {
 		select {
 		case cmd := <-commandQueue:
-			log.Printf("Move: %6s Via %10s By: %s\n", cmd.key, cmd.user)
+			log.Printf("Move: %6s Via %10s By: %s\n", cmd.key, cmd.via, cmd.user)
 			emulator.Command(cmd.key)
 		}
 	}
