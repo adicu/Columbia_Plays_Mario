@@ -33,5 +33,13 @@ func (m TwilioMessageHandler) ServeHTTP(resp http.ResponseWriter, req *http.Requ
 		return
 	}
 
-	m.messageQueue <- UserCommand{ConvertCommand(msg.Body), "Twilio", msg.From}
+	cmd := UserCommand{ConvertCommand(msg.Body), "Twilio", msg.From}
+	if cmd.key == "" {
+		log.Printf("Invalid gameboy move, \"%s\"\n", msg.Body)
+		resp.WriteHeader(http.StatusBadRequest)
+		resp.Write([]byte("Invalid move, please use:\na / b / l(eft) / u(p) / r(ight) / d(own) / start / select"))
+		return
+	}
+
+	m.messageQueue <- cmd
 }
