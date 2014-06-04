@@ -37,8 +37,7 @@ func (m TwilioMessageHandler) ServeHTTP(resp http.ResponseWriter, req *http.Requ
 	cmd := UserCommand{ConvertCommand(msg.Body), "Twilio", msg.From}
 	if cmd.key == "" {
 		log.Printf("Invalid gameboy move, \"%s\"\n", msg.Body)
-		resp.WriteHeader(http.StatusBadRequest)
-		resp.Header().Set("Content-Type", "text/plain; charset=utf-8")
+		resp.Header().Set("Content-Type", "text/plain")
 		_, err := fmt.Fprint(resp, "Invalid move, please use:\na / b / l(eft) / u(p) / r(ight) / d(own) / start / select")
 		if err != nil {
 			log.Printf("Error while writing http response, %s\n", err.Error())
