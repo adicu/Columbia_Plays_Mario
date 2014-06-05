@@ -11,6 +11,7 @@ const (
 	PORT            = ":80"
 	TwilioEndpoint  = "/twilio"
 	HipChatEndpoint = "/hipchat"
+	StatsEndpoint   = "/stats"
 )
 
 func checkEnvVariables() {
@@ -36,7 +37,12 @@ func getCommands(handlers []CommandCollector) {
 func main() {
 	checkEnvVariables()
 	emulator := GVBAM{os.Args[1]}
-	commandQueue := make(chan UserCommand)
+	commandQueue := make(chan UserCommand, 50)
+
+	// set up logging
+	moveQueue := make(chan string)
+	sh := NewStatHandler(moveQueue)
+	http.Handle(StatsEndpoint, sh)
 
 	go getCommands([]CommandCollector{
 		TwilioMessageHandler{TwilioEndpoint, commandQueue},
@@ -46,7 +52,8 @@ func main() {
 	for {
 		select {
 		case cmd := <-commandQueue:
-			log.Printf("Move: %6s Via %10s By: %s\n", cmd.key, cmd.via, cmd.user)
+			moveQueue <- cmd.ToString()
+			log.Printf(cmd.ToString())
 			emulator.Command(cmd.key)
 			time.Sleep(500 * time.Millisecond)
 		}

@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"net/http"
 	"os/exec"
 	"strings"
@@ -62,6 +63,10 @@ type UserCommand struct {
 	key  string
 	via  string
 	user string
+}
+
+func (cmd UserCommand) ToString() string {
+	return fmt.Sprintf("Move: %6s Via %10s By: %s\n", cmd.key, cmd.via, cmd.user)
 }
 
 // Objects that collect commands to be passed to the emulator

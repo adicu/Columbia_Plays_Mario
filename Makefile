@@ -3,7 +3,8 @@ EXECUTABLE = pokebot
 GO_FILES = main.go \
 	tool.go \
 	hipchat.go \
-	twilio.go
+	twilio.go \
+	stats.go
 
 default: build
 
