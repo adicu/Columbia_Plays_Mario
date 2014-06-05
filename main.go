@@ -39,6 +39,11 @@ func main() {
 	emulator := GVBAM{os.Args[1]}
 	commandQueue := make(chan UserCommand, 50)
 
+	// static files
+	http.Handle("/", http.FileServer(http.Dir("static/")))
+	http.Handle("/index.html", http.FileServer(http.Dir("static/")))
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static/"))))
+
 	// set up logging
 	moveQueue := make(chan string)
 	sh := NewStatHandler(moveQueue)
