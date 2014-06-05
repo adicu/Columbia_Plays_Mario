@@ -42,5 +42,5 @@ func (s statHandler) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	fmt.Fprint(resp, respBytes)
+	fmt.Fprint(resp, string(respBytes))
 }
