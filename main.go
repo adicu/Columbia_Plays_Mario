@@ -51,7 +51,6 @@ func main() {
 
 	go getCommands([]CommandCollector{
 		TwilioMessageHandler{TwilioEndpoint, commandQueue},
-		HipChatCollector{HipChatEndpoint, commandQueue},
 	})
 
 	for {
