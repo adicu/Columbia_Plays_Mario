@@ -124,13 +124,13 @@ func ConvertCommand(c string) string {
 
 func EmulatorCommand(c string) {
 	var keyPress *exec.Cmd
-	keyPress = exec.Command(GVBAM_TOOL, "key", c)
+	keyPress = exec.Command(GVBAM_TOOL, "key", c);
 
 	var output bytes.Buffer
 	keyPress.Stdout = &output
 	keyPress.Stderr = &output
 
-	err := keyPress.Run()
+	err := keyPress.Start()
 	if err != nil {
 		log.Println("ERROR: xdotool not functioning properly")
 	}

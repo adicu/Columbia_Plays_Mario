@@ -36,7 +36,7 @@ func main() {
 			case cmd := <-commandQueue:
 				moveQueue <- cmd.ToString()
 				log.Printf(cmd.ToString())
-				EmulatorCommand(cmd.Key)
+				EmulatorCommand(ConvertCommand(cmd.Key))
 				time.Sleep(CommandSleepTime * time.Millisecond)
 			}
 		}
