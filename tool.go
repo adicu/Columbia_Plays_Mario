@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -9,10 +8,12 @@ import (
 	"net/http"
 	"os/exec"
 	"strings"
+	"time"
 )
 
 const (
-	GVBAM_TOOL = "xdotool"
+	GVBAM_TOOL   = "xdotool"
+	KeyDownDelay = 50
 )
 
 type Command struct {
@@ -123,14 +124,21 @@ func ConvertCommand(c string) string {
 }
 
 func EmulatorCommand(c string) {
-	var keyPress *exec.Cmd
-	keyPress = exec.Command(GVBAM_TOOL, "key", c);
+	var keyDown *exec.Cmd
+	var keyUp *exec.Cmd
+	keyDown = exec.Command(GVBAM_TOOL, "keydown", c)
+	keyUp = exec.Command(GVBAM_TOOL, "keyup", c)
 
-	var output bytes.Buffer
-	keyPress.Stdout = &output
-	keyPress.Stderr = &output
+	log.Printf("key down %s", c)
+	err := keyDown.Run()
+	if err != nil {
+		log.Println("ERROR: xdotool not functioning properly")
+	}
 
-	err := keyPress.Start()
+	time.Sleep(time.Millisecond * KeyDownDelay)
+
+	log.Printf("key up %s", c)
+	err = keyUp.Run()
 	if err != nil {
 		log.Println("ERROR: xdotool not functioning properly")
 	}
