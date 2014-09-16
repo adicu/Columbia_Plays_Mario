@@ -2,7 +2,10 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"log"
 	"net/http"
 	"os/exec"
 	"strings"
@@ -11,6 +14,70 @@ import (
 const (
 	GVBAM_TOOL = "xdotool"
 )
+
+type Command struct {
+	Username string `json:"username"`
+	Key      string `json:"key"`
+}
+
+func (cmd Command) ToString() string {
+	return fmt.Sprintf("Move: %6s By: %s\n", cmd.Key, cmd.Username)
+}
+
+// Objects that collect commands to be passed to the emulator
+type CommandCollector interface {
+	GetUrl() string
+	http.Handler
+}
+
+// Represents an emulator
+type Emulator interface {
+	Command(string)
+}
+
+// MessageHandler wraps the command pipeline
+type MessageHandler struct {
+	messageQueue chan Command
+}
+
+func (m MessageHandler) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
+	// valid http method
+	if req.Method != "POST" {
+		resp.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+
+	// read in json to buffer
+	bodyBytes, err := ioutil.ReadAll(req.Body)
+	if err != nil {
+		resp.WriteHeader(400)
+		return
+	}
+
+	// parse buffer into a command
+	var msg Command
+	err = json.Unmarshal(bodyBytes, &msg)
+	if err != nil {
+		resp.WriteHeader(400)
+		return
+	}
+
+	// validate the command
+	if msg.Key == "" {
+		log.Printf("Invalid gameboy move, \"%s\"\n", msg.Key)
+		resp.Header().Set("Content-Type", "text/plain")
+		_, err := fmt.Fprint(resp, "Invalid move, please use:\na / b / l(eft) / u(p) / r(ight) / d(own) / start / select")
+		if err != nil {
+			log.Printf("Error while writing http response, %s\n", err.Error())
+		}
+		return
+	}
+
+	// send the command into the pipeline
+	go func() {
+		m.messageQueue <- msg
+	}()
+}
 
 func ConvertCommand(c string) string {
 	c = strings.ToLower(c)
@@ -46,47 +113,14 @@ func ConvertCommand(c string) string {
 	// B
 	case "b":
 		return "x"
-
-	// Start
-	case "start":
-		return "Return"
-
-	// Select
-	case "select":
-		return "Backspace"
 	}
+
 	return ""
 }
 
-// Command to be passed to the emulator
-type UserCommand struct {
-	key  string
-	via  string
-	user string
-}
-
-func (cmd UserCommand) ToString() string {
-	return fmt.Sprintf("Move: %6s Via %10s By: %s\n", cmd.key, cmd.via, cmd.user)
-}
-
-// Objects that collect commands to be passed to the emulator
-type CommandCollector interface {
-	GetUrl() string
-	http.Handler
-}
-
-// Represents an emulator
-type Emulator interface {
-	Command(string)
-}
-
-type GVBAM struct {
-	Window string
-}
-
-func (g GVBAM) Command(c string) {
+func EmulatorCommand(c string) {
 	var keyPress *exec.Cmd
-	keyPress = exec.Command(GVBAM_TOOL, "key", "--window", g.Window, c)
+	keyPress = exec.Command(GVBAM_TOOL, "key", c)
 
 	var output bytes.Buffer
 	keyPress.Stdout = &output
@@ -94,6 +128,6 @@ func (g GVBAM) Command(c string) {
 
 	err := keyPress.Run()
 	if err != nil {
-		panic("xdotool not functioning properly")
+		log.Println("ERROR: xdotool not functioning properly")
 	}
 }

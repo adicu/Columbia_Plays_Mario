@@ -35,4 +35,10 @@ You can specify a manual crop of the window to get rid of the top bar's menu.
 
 
 
+## Altering CliClick
+
+key layout: http://web.archive.org/web/20100501161453/http://www.classicteck.com/rbarticles/mackeyboard.php
+
+
+
 

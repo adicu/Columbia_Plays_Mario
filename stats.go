@@ -18,6 +18,8 @@ type statHandler struct {
 
 func NewStatHandler(moves chan string) *statHandler {
 	sh := statHandler{moves, make([]moveObject, 20)}
+
+	// keeps last 10 commands updated
 	go func() {
 		for {
 			newCommand := <-moves
