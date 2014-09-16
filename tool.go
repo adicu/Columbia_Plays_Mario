@@ -12,8 +12,7 @@ import (
 )
 
 const (
-	GVBAM_TOOL   = "xdotool"
-	KeyDownDelay = 50
+	GVBAM_TOOL = "xdotool"
 )
 
 type Command struct {
@@ -84,50 +83,76 @@ func (m MessageHandler) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	}()
 }
 
-func ConvertCommand(c string) string {
+type EmulatorCommand struct {
+	Key   string
+	Delay time.Duration
+}
+
+func ConvertCommand(c string) EmulatorCommand {
 	c = strings.ToLower(c)
 	switch c {
 	// Up
 	case "u":
 		fallthrough
 	case "up":
-		return "Up"
+		return EmulatorCommand{
+			Key:   "Up",
+			Delay: time.Microsecond * 100,
+		}
 
 	// Left
 	case "l":
 		fallthrough
 	case "left":
-		return "Left"
+		return EmulatorCommand{
+			Key:   "Left",
+			Delay: time.Microsecond * 100,
+		}
 
 	// Down
 	case "d":
 		fallthrough
 	case "down":
-		return "Down"
+		return EmulatorCommand{
+			Key:   "Down",
+			Delay: time.Microsecond * 100,
+		}
 
 	// Right
 	case "r":
 		fallthrough
 	case "right":
-		return "Right"
+		return EmulatorCommand{
+			Key:   "Right",
+			Delay: time.Microsecond * 100,
+		}
 
 	// A
 	case "a":
-		return "z"
+		return EmulatorCommand{
+			Key:   "z",
+			Delay: time.Microsecond * 400,
+		}
 
 	// B
 	case "b":
-		return "x"
+		return EmulatorCommand{
+			Key:   "x",
+			Delay: time.Microsecond * 200,
+		}
 	}
 
-	return ""
+	return EmulatorCommand{
+		Key:   "",
+		Delay: 0,
+	}
 }
 
-func EmulatorCommand(c string) {
+func EmulatorExecute(c EmulatorCommand) {
 	var keyDown *exec.Cmd
 	var keyUp *exec.Cmd
-	keyDown = exec.Command(GVBAM_TOOL, "keydown", c)
-	keyUp = exec.Command(GVBAM_TOOL, "keyup", c)
+	keyDown = exec.Command(GVBAM_TOOL, "keydown", c.Key)
+	keyUp = exec.Command(GVBAM_TOOL, "keyup", c.Key)
 
 	log.Printf("key down %s", c)
 	err := keyDown.Run()
@@ -135,7 +160,8 @@ func EmulatorCommand(c string) {
 		log.Println("ERROR: xdotool not functioning properly")
 	}
 
-	time.Sleep(time.Millisecond * KeyDownDelay)
+	// sleep the allocated time for this command
+	time.Sleep(c.Delay)
 
 	log.Printf("key up %s", c)
 	err = keyUp.Run()
