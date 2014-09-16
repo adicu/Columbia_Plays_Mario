@@ -13,6 +13,31 @@
                 padding-top: 50px;
                 padding-bottom: 20px;
             }
+            h1 {
+                text-align: center;
+            }
+            img  {
+                display: block;
+                margin: auto;
+                max-width: 100%;
+            }
+            .col-sm-6 {
+                padding:  5rem;
+                text-align: center
+            }
+            .btn a {
+                max-width: 60%;
+                font-size: 5rem;
+                padding: 2rem;
+                margin: 5rem !important;
+                color: white !important;
+                text-decoration: none !important;
+            }
+            @media screen and (max-width: 640px) {
+                .btn a {
+                    font-size: 3rem;
+                }
+            }
         </style>
         <link rel="stylesheet" href="css/bootstrap-theme.min.css">
         <link rel="stylesheet" href="css/main.css">
@@ -22,13 +47,22 @@
     <body>
 
     <!-- Main jumbotron for a primary marketing message or call to action -->
-    <h1>Twilio Plays Pokemon</h1>
+    <h1>Columbia Plays Mario</h1>
+    <div class="row">
+        <div class="col-xs-12">
+            <a href="">
+                <img src="http://adicu.com/admin/media/uploads/char-dobble-mario.png" />
+            </a>
     <div class="row">
       <div class="col-sm-6">
-        <object type="application/x-shockwave-flash" height="378" width="620" id="live_embed_player_flash" data="http://www.twitch.tv/widgets/live_embed_player.swf?channel=natebrennand" bgcolor="#000000"><param name="allowFullScreen" value="true" /><param name="allowScriptAccess" value="always" /><param name="allowNetworking" value="all" /><param name="movie" value="http://www.twitch.tv/widgets/live_embed_player.swf" /><param name="flashvars" value="hostname=www.twitch.tv&channel=natebrennand&auto_play=true&start_volume=25" /></object><a href="http://www.twitch.tv/natebrennand" style="padding:2px 0px 4px; display:block; width:345px; font-weight:normal; font-size:10px;text-decoration:underline; text-align:center;">Watch live video from natebrennand on www.twitch.tv</a>
+        <div class="btn btn-success">
+            <a class="button success" href="/play">Play</a>
+        </div>
       </div>
       <div class="col-sm-6">
-        <div id="text"></div>
+        <div class="btn btn-primary">
+            <a href="/watch">Watch</a>
+        </div>
       </div>
     </div>
 
@@ -36,13 +70,5 @@
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.0.min.js"><\/script>')</script>
 
         <script src="js/vendor/bootstrap.min.js"></script>
-        <script type="text/javascript">
-        setInterval(function () {
-            $.get('http://198.199.102.202/stats', function (data) {
-              // var data = ["a", "b", "c", "d"];
-              $('#text').html(data.join('<br>'));
-            });
-        }, 1000);
-        </script>
     </body>
 </html>
