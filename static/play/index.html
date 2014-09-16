@@ -15,12 +15,26 @@
                 width: 100%;
             }
             body {
-                padding: 50px;
+                padding: 5rem;
             }
             h1 {
                 text-align: center;
                 margin-bottom: 5rem;
             }
+            .name {
+                margin: 0 auto 5rem;
+                display: block;
+                font-size: 2rem;
+                text-align: center;
+                border: 0;
+                outline: 0;
+                background-color: rgba(0,0,0,0);
+                border-bottom: 2px solid black;
+            }
+            input::input-placeholder, input::-webkit-input-placeholder, input::-moz-placeholder {
+               color: black;
+            }
+
             .col-xs-2 {
                 padding-bottom: 16.666666667%;
             }
@@ -39,6 +53,9 @@
                 height: 0;
                 position: relative;
                 background-color: #131521;
+            }
+            .key {
+                cursor: pointer;
             }
             .key .label {
                 position: absolute;
@@ -112,6 +129,7 @@
 
     <!-- Main jumbotron for a primary marketing message or call to action -->
     <h1>Columbia Plays Mario</h1>
+    <input class="name" type="text" placeholder="Enter Your Name">
     <div class="row">
         <div class="col-xs-5">
             <div class="row d-pad">
