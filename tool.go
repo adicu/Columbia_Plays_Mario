@@ -16,7 +16,7 @@ const (
 )
 
 type Command struct {
-	Username string `json:"username"`
+	Username string `json:"username,omitempty"`
 	Key      string `json:"key"`
 }
 
@@ -43,6 +43,7 @@ type MessageHandler struct {
 func (m MessageHandler) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	// valid http method
 	if req.Method != "POST" {
+		log.Println("Wrong HTTP header")
 		resp.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
@@ -50,6 +51,7 @@ func (m MessageHandler) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	// read in json to buffer
 	bodyBytes, err := ioutil.ReadAll(req.Body)
 	if err != nil {
+		log.Println("Failed to read in request body")
 		resp.WriteHeader(400)
 		return
 	}
@@ -58,6 +60,8 @@ func (m MessageHandler) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	var msg Command
 	err = json.Unmarshal(bodyBytes, &msg)
 	if err != nil {
+		log.Println(string(bodyBytes))
+		log.Printf("Failed to unmarshal JSON => %s", err.Error())
 		resp.WriteHeader(400)
 		return
 	}
