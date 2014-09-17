@@ -3,13 +3,10 @@ package main
 import (
 	"log"
 	"net/http"
-	"time"
 )
 
 const (
 	PORT             = ":5000"
-	Endpoint         = "/press"
-	StatsEndpoint    = "/stats"
 	CommandSleepTime = 50
 )
 
@@ -22,11 +19,13 @@ func main() {
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static/"))))
 
 	// set up logging
-	moveQueue := make(chan string)
-	sh := NewStatHandler(moveQueue)
+	moveQueue := make(chan Command)
+	sh := NewStatHandlerString(moveQueue)
+	sh2 := NewStatHandlerJSON(moveQueue)
 
 	// add endpoints
-	http.Handle(StatsEndpoint, sh)
+	http.Handle("/stats", sh)
+	http.Handle("/stats2", sh2)
 	http.Handle("/press", MessageHandler{commandQueue})
 
 	// send off command worker
@@ -34,10 +33,12 @@ func main() {
 		for {
 			select {
 			case cmd := <-commandQueue:
-				moveQueue <- cmd.ToString()
+				// send to the old move queue
+				moveQueue <- cmd
 				log.Printf(cmd.ToString())
+
+				// send off go-routine to execute command
 				go EmulatorExecute(ConvertCommand(cmd.Key))
-				time.Sleep(CommandSleepTime * time.Millisecond)
 			}
 		}
 	}()

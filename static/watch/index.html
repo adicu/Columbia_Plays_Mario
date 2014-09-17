@@ -43,7 +43,7 @@
               data = JSON.parse(json);
               html = "";
               for (var i=0; i < data.length; i++) {
-                html += data[i]['Move'] + '<br>'
+                html += data[i] + '<br>'
               }
               $('#text').html(html);
             });

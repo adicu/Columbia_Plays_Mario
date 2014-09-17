@@ -2,38 +2,36 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 )
 
-type moveObject struct {
-	Move string
+const (
+	HeldMoves = 40
+)
+
+type statHandlerJSON struct {
+	newMoves  chan Command
+	lastMoves []Command
 }
 
-type statHandler struct {
-	newMoves  chan string
-	lastMoves []moveObject
-}
+func NewStatHandlerJSON(moves chan Command) *statHandlerJSON {
+	sh := statHandlerJSON{moves, make([]Command, HeldMoves)}
 
-func NewStatHandler(moves chan string) *statHandler {
-	sh := statHandler{moves, make([]moveObject, 20)}
-
-	// keeps last 10 commands updated
+	// keeps last 40 commands updated
 	go func() {
 		for {
 			newCommand := <-moves
-			copy(sh.lastMoves[1:], sh.lastMoves[:])
-			sh.lastMoves[0] = moveObject{newCommand}
+			copy(sh.lastMoves[1:], sh.lastMoves[:]) // shift by 1
+			sh.lastMoves[0] = newCommand
 		}
 	}()
 	return &sh
 }
 
-func (s statHandler) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
+func (s statHandlerJSON) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	if req.Method != "GET" {
 		resp.WriteHeader(http.StatusMethodNotAllowed)
-		log.Printf("Wrong http method, %s, on status endpoint.", req.Method)
 		return
 	}
 
@@ -44,5 +42,48 @@ func (s statHandler) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	fmt.Fprint(resp, string(respBytes))
+	_, err = resp.Write(respBytes)
+	if err != nil {
+		log.Print("Error writing stats")
+		resp.WriteHeader(http.StatusInternalServerError)
+	}
+}
+
+type statHandlerString struct {
+	newMoves  chan Command
+	lastMoves []string
+}
+
+func NewStatHandlerString(moves chan Command) *statHandlerString {
+	sh := statHandlerString{moves, make([]string, HeldMoves)}
+
+	// keeps last 40 commands updated
+	go func() {
+		for {
+			newCommand := <-moves
+			copy(sh.lastMoves[1:], sh.lastMoves[:]) // shift by 1
+			sh.lastMoves[0] = newCommand.ToString()
+		}
+	}()
+	return &sh
+}
+
+func (s statHandlerString) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
+	if req.Method != "GET" {
+		resp.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+
+	respBytes, err := json.Marshal(s.lastMoves)
+	if err != nil {
+		log.Print("Error encoding stats")
+		resp.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	_, err = resp.Write(respBytes)
+	if err != nil {
+		log.Print("Error writing stats")
+		resp.WriteHeader(http.StatusInternalServerError)
+	}
 }
