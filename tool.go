@@ -98,16 +98,7 @@ func ConvertCommand(c string) EmulatorCommand {
 	case "up":
 		return EmulatorCommand{
 			Key:   "Up",
-			Delay: time.Microsecond * 100,
-		}
-
-	// Left
-	case "l":
-		fallthrough
-	case "left":
-		return EmulatorCommand{
-			Key:   "Left",
-			Delay: time.Microsecond * 100,
+			Delay: time.Millisecond * 100,
 		}
 
 	// Down
@@ -116,8 +107,18 @@ func ConvertCommand(c string) EmulatorCommand {
 	case "down":
 		return EmulatorCommand{
 			Key:   "Down",
-			Delay: time.Microsecond * 100,
+			Delay: time.Millisecond * 100,
 		}
+
+	// Left
+	case "l":
+		fallthrough
+	case "left":
+		return EmulatorCommand{
+			Key:   "Left",
+			Delay: time.Millisecond * 200,
+		}
+
 
 	// Right
 	case "r":
@@ -125,21 +126,21 @@ func ConvertCommand(c string) EmulatorCommand {
 	case "right":
 		return EmulatorCommand{
 			Key:   "Right",
-			Delay: time.Microsecond * 100,
+			Delay: time.Millisecond * 200,
 		}
 
 	// A
 	case "a":
 		return EmulatorCommand{
 			Key:   "z",
-			Delay: time.Microsecond * 400,
+			Delay: time.Millisecond * 400,
 		}
 
 	// B
 	case "b":
 		return EmulatorCommand{
 			Key:   "x",
-			Delay: time.Microsecond * 200,
+			Delay: time.Millisecond * 200,
 		}
 	}
 
