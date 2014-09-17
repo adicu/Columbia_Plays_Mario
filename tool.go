@@ -55,6 +55,7 @@ func (m MessageHandler) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 		resp.WriteHeader(400)
 		return
 	}
+	defer req.Body.Close()
 
 	// parse buffer into a command
 	var msg Command
